@@ -1,0 +1,23 @@
+#docker-compose -f docker-compose.yml -f docker-compose.override.yml up --build
+#docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+#docker-compose -f docker-compose.yml -f docker-compose.override.yml down
+
+#docker rmi $(docker images -q)
+#docker rm $(docker ps -aq)
+#docker system prune
+
+version: '3.4'
+
+services:
+  catalogdb:
+    image: mongo
+
+  catalog.api:
+    image: ${DOCKER_REGISTRY-}catalogapi
+    build:
+      context: .
+      dockerfile: Services/Catalog/Catalog.API/Dockerfile
+
+volumes:
+  mongo_data:
+  
