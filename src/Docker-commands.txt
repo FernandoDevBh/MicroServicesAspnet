@@ -1,0 +1,12 @@
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up --build
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+docker-compose -f docker-compose.yml -f docker-compose.override.yml down
+
+docker rmi $(docker images -q)
+docker rm $(docker ps -aq)
+docker system prune
+
+-- REDIS
+docker run -d -p 6379:6379 --name aspnet-redis redis
+docker exec -it aspnet-redis /bin/bash
+  redis-cli
