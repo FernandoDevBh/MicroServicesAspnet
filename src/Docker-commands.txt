@@ -10,3 +10,5 @@ docker system prune
 docker run -d -p 6379:6379 --name aspnet-redis redis
 docker exec -it aspnet-redis /bin/bash
   redis-cli
+
+-- portainer
