@@ -15,6 +15,29 @@ services:
     ports:
       - "6379:6379"
 
+  discountdb:
+    container_name: discountdb
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin1234
+      - POSTGRES_DB=DiscountDb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    container_name: pgadmin
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@pgadmin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin1234
+    volumes:
+      - pgadmin_data:/root/.pgadmin
+    ports:
+      - "5050:80"
+
   portainer:
     container_name: portainer
     restart: always
@@ -40,8 +63,39 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "CacheSettings:ConnectionString=basketdb:6379"
+      - "GrpcSettings:DiscountUrl=http://discount.grpc"
     depends_on:
       - basketdb
     ports:
       - "8001:80"
+
+
+  discount.api:
+    container_name: discount.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:Server=discountdb"
+      - "DatabaseSettings:Port=5432"
+      - "DatabaseSettings:Database=DiscountDb"
+      - "DatabaseSettings:UserId=admin"
+      - "DatabaseSettings:Password=admin1234"
+    depends_on:
+      - discountdb
+    ports:
+      - "8002:80"
+
+
+  discount.grpc:
+    container_name: discount.grpc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:Server=discountdb"
+      - "DatabaseSettings:Port=5432"
+      - "DatabaseSettings:Database=DiscountDb"
+      - "DatabaseSettings:UserId=admin"
+      - "DatabaseSettings:Password=admin1234"
+    depends_on:
+      - discountdb
+    ports:
+      - "8003:80"
 

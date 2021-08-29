@@ -1,24 +1,23 @@
-using Basket.API.Configuration;
-using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Basket.API.Repositories;
-using Discount.Grpc.Protos;
-using Basket.API.GrpcServices;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Basket.API
+namespace Ordering.API
 {
   public class Startup
   {
-    private BasketAppSettings _appSettings;
-
     public Startup(IConfiguration configuration)
     {
       Configuration = configuration;
-      _appSettings = new BasketAppSettings(configuration);
     }
 
     public IConfiguration Configuration { get; }
@@ -26,17 +25,11 @@ namespace Basket.API
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddStackExchangeRedisCache(options =>
-      {
-        options.Configuration = _appSettings.CacheSettings;
-      });
-      services.AddScoped<IBasketRepository, BasketRepository>();
-      services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options => options.Address = _appSettings.DiscountUrl);
-      services.AddScoped<DiscountGrpcService>();
+
       services.AddControllers();
       services.AddSwaggerGen(c =>
       {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Basket.API", Version = "v1" });
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ordering.API", Version = "v1" });
       });
     }
 
@@ -47,7 +40,7 @@ namespace Basket.API
       {
         app.UseDeveloperExceptionPage();
         app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Basket.API v1"));
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ordering.API v1"));
       }
 
       app.UseRouting();
