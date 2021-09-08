@@ -13,6 +13,8 @@ namespace Basket.API.Configuration
       _configuration = configuration;
     }
 
+    public string HostAddress { get => _configuration.GetValue<string>("EventBusSettings:HostAddress"); }
+
     public string CacheSettings { get => _configuration.GetValue<string>("CacheSettings:ConnectionString"); }
     public Uri DiscountUrl
     { 
